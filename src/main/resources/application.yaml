@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: user-profile-post-api
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres   #username: ${DB_USERNAME:postgres} should use for GitHub
+    password: admin1234  #password: ${DB_PASSWORD:postgres} should use for GitHub
+
+    url: jdbc:postgresql://localhost:5432/user_profile_post
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
+  mvc:
+    problemdetails:
+      enabled: true
+
+
