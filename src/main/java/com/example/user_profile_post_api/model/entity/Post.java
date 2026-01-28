@@ -1,7 +1,6 @@
-package com.example.user_profile_post_api.entity;
+package com.example.user_profile_post_api.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

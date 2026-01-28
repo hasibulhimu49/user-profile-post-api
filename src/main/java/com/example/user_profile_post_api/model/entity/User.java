@@ -1,7 +1,6 @@
-package com.example.user_profile_post_api.entity;
+package com.example.user_profile_post_api.model.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,8 +14,8 @@ public class User {
     Long userId;
 
 
-    @Column(nullable = false, unique = true)
-    String userName;
+    @Column(name ="username" , nullable = false, unique = true)
+    String username;
 
     @Column(nullable = false,unique = true)
     String email;

@@ -1,16 +1,22 @@
 package com.example.user_profile_post_api.service;
 
 import com.example.user_profile_post_api.dto.request.ProfileCreateRequestDto;
-import com.example.user_profile_post_api.dto.response.PostResponseDto;
 import com.example.user_profile_post_api.dto.response.ProfileResponseDto;
 import com.example.user_profile_post_api.dto.update.ProfileUpdateRequestDto;
-import com.example.user_profile_post_api.entity.Profile;
-import com.example.user_profile_post_api.entity.User;
+import com.example.user_profile_post_api.model.entity.Profile;
+import com.example.user_profile_post_api.model.entity.User;
 import com.example.user_profile_post_api.mapper.ProfileMapper;
+import com.example.user_profile_post_api.model.enums.Gender;
 import com.example.user_profile_post_api.repository.ProfileRepository;
 import com.example.user_profile_post_api.repository.UserRepository;
+import com.example.user_profile_post_api.repository.projection.ProfileSummary;
+import com.example.user_profile_post_api.repository.specification.ProfileSpecifications;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,21 +31,19 @@ public class ProfileService {
     private final UserRepository userRepository;
 
     //Profile Create
-    public ProfileResponseDto createProfile(Long userId, ProfileCreateRequestDto dto)
-    {
-        User user=userRepository.findById(userId).
-                orElseThrow(()->new EntityNotFoundException("Not found"));
+    public ProfileResponseDto createProfile(Long userId, ProfileCreateRequestDto dto) {
+        User user = userRepository.findById(userId).
+                orElseThrow(() -> new EntityNotFoundException("Not found"));
 
-        Profile profile=profileMapper.toEntity(dto);
+        Profile profile = profileMapper.toEntity(dto);
         profile.setUser(user); //relationship handled here
-        Profile savedProfile=profileRepository.save(profile);
+        Profile savedProfile = profileRepository.save(profile);
         return profileMapper.toResponse(savedProfile);
 
     }
 
     //get profile by id
-    public ProfileResponseDto getProfileById(Long profildeId)
-    {
+    public ProfileResponseDto getProfileById(Long profildeId) {
        /*Optional<Profile> optionalProfile=profileRepository.findById(profildeId);
        if(optionalProfile.isPresent())
        {
@@ -51,38 +55,81 @@ public class ProfileService {
            throw new EntityNotFoundException("not found");
        }*/
 
-        Profile profile=profileRepository.findById(profildeId).
-                orElseThrow(()->new EntityNotFoundException("Not found"));
+        Profile profile = profileRepository.findById(profildeId).
+                orElseThrow(() -> new EntityNotFoundException("Not found"));
+
         return profileMapper.toResponse(profile);
     }
 
+
     //get all profile
-    public List<ProfileResponseDto> getAllProfile()
-    {
-        List <Profile> profiles=profileRepository.findAll();
+    @Transactional
+    public List<ProfileResponseDto> getAllProfile() {
+        List<Profile> profiles = profileRepository.findAll();
         return profiles.stream().map(profile -> profileMapper.toResponse(profile)).toList();
     }
 
+
     //update profile
 
-    public ProfileResponseDto updateProfile(Long profileId,ProfileUpdateRequestDto updateRequestDto)
-    {
-        Profile profile=profileRepository.findById(profileId).orElseThrow(()->new EntityNotFoundException("Not found"));
-        profileMapper.updateEntity(updateRequestDto,profile);
+    public ProfileResponseDto updateProfile(Long profileId, ProfileUpdateRequestDto updateRequestDto) {
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Not found"));
+        profileMapper.updateEntity(updateRequestDto, profile);
         profileRepository.save(profile);
         return profileMapper.toResponse(profile);
 
     }
     //delete profile
 
-    public void deleteProfile(Long profileId)
-    {
-        if(!profileRepository.existsById(profileId))
-        {
+    public void deleteProfile(Long profileId) {
+        if (!profileRepository.existsById(profileId)) {
             throw new EntityNotFoundException("Not found");
-        }
-        else {
+        } else {
             profileRepository.deleteById(profileId);
         }
+    }
+
+
+    public List<ProfileResponseDto> getProfileByFirstnameAndGender(String firstname, Gender gender) {
+        return profileRepository.findByFirstNameAndGender(firstname, gender)
+                .stream().map(profile -> profileMapper.toResponse(profile)).toList();
+    }
+
+
+    public Optional<ProfileResponseDto> findByUsername(String username) {
+        return profileRepository.findByUsername(username).map(p -> profileMapper.toResponse(p));
+    }
+
+
+    public List<ProfileResponseDto> searchProfileByBio(String bio) {
+        return profileRepository.searchProfileByBio(bio).stream().map(profile -> profileMapper.toResponse(profile)).toList();
+    }
+
+
+    //paging
+    public Page<ProfileResponseDto> searchByFirstName(String keyword, Pageable pageable) {
+        return profileRepository.findByFirstNameContaining(keyword, pageable).map(profileMapper::toResponse);
+    }
+
+
+
+    //Projection
+    public List<ProfileSummary> searchByLastname(String lastname)
+    {
+        return profileRepository.findByLastName(lastname);
+    }
+
+
+    //Specifications (Dynamic Search)
+    public Page<ProfileResponseDto> search(String firstname,String lastname,
+                                           String bio,Gender gender,String username,
+                                           Pageable pageable)
+    {
+        Specification<Profile> spec=Specification.where(ProfileSpecifications.
+                hasFirstName(firstname)).and(ProfileSpecifications.hasLastName(lastname))
+                .and(ProfileSpecifications.hasBio(bio)).and(ProfileSpecifications.
+                        hasGender(gender)).and(ProfileSpecifications.hasUsername(username));
+
+        return profileRepository.findAll(spec,pageable).map(profileMapper::toResponse);
     }
 }
