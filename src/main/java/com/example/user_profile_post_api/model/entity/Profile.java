@@ -1,7 +1,8 @@
-package com.example.user_profile_post_api.entity;
+package com.example.user_profile_post_api.model.entity;
 
+import com.example.user_profile_post_api.model.entity.base.Auditable;
+import com.example.user_profile_post_api.model.enums.Gender;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Table(name = "profile_table")
 @Getter
 @Setter
-public class Profile {
+public class Profile extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long profileId;
@@ -21,6 +22,9 @@ public class Profile {
 
     @Column(name = "last_name", length = 100)
     String lastName;
+
+    @Enumerated(EnumType.STRING)
+    Gender gender;
 
     @Column(length = 200)
     String bio;

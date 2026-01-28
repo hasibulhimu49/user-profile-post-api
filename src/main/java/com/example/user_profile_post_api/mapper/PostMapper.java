@@ -3,7 +3,7 @@ package com.example.user_profile_post_api.mapper;
 import com.example.user_profile_post_api.dto.request.PostCreateRequestDto;
 import com.example.user_profile_post_api.dto.response.PostResponseDto;
 import com.example.user_profile_post_api.dto.update.PostUpdateRequestDto;
-import com.example.user_profile_post_api.entity.Post;
+import com.example.user_profile_post_api.model.entity.Post;
 import org.springframework.stereotype.Component;
 
 @Component

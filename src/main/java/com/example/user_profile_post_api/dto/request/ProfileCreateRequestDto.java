@@ -1,5 +1,6 @@
 package com.example.user_profile_post_api.dto.request;
 
+import com.example.user_profile_post_api.model.enums.Gender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 
@@ -11,7 +12,10 @@ public record ProfileCreateRequestDto(
         @JsonProperty("last_name")
         String lastName,
 
+        @JsonProperty("gender")
+        Gender gender,
 
         @JsonProperty("bio")
         String bio
+
 ){}

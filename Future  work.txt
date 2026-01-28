@@ -1,0 +1,4 @@
+1 query → user_table
+N query → profile_table
+N×M query → post_table
+🔥This is dangerous performance problem
