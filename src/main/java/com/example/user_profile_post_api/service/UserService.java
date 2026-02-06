@@ -9,6 +9,10 @@ import com.example.user_profile_post_api.model.enums.Gender;
 import com.example.user_profile_post_api.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +25,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j  // Lombok annotation for logger
 public class UserService {
+
+   //private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -36,14 +43,21 @@ public class UserService {
 
     //create user
     public UserResponseDto createUser(UserCreateRequestDto dto) {
+        log.info("Create user with username: {}",dto.username());
         User user = userMapper.toEntity(dto);
         User savedUser = userRepository.save(user);
+        log.debug("User debug: {}",savedUser);
         return userMapper.toResponse(savedUser);
     }
 
 
     //get by id
     public UserResponseDto getUserById(Long userId) {
+
+        MDC.put("userId",String.valueOf(userId));
+        log.info("fatching user");
+
+
       /*  Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isPresent()) {

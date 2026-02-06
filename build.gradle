@@ -38,6 +38,20 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	implementation 'org.flywaydb:flyway-core'
+
+
+	//Logging
+
+	/*
+	implementation('org.springframework.boot:spring-boot-starter') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
+	 */
+
+
+	// Add Spring Boot starter for Log4j2
+	//implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+
 }
 
 tasks.named('test') {

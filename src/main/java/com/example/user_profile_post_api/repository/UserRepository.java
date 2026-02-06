@@ -23,6 +23,7 @@ public interface UserRepository extends JpaRepository<User,Long>, JpaSpecificati
 
 
 
+
     /*
 
     //JPQL

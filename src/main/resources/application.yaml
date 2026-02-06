@@ -26,7 +26,21 @@ spring:
     problemdetails:
       enabled: true
 
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.orm.jdbc.bind: trace
+
+
 logging:
+  pattern:
+   # console: "%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] user=%X{userId} %logger{36} - %msg%n" #%X{userId} = MDC value
+  #              2026-02-06 14:22:10    [main]  user=10 ProfileService - Profile fetched
+
+
+
   level:
-    org.hibernate.SQL: debug
-    org.hibernate.orm.jdbc.bind: trace
+    root: INFO
+    com.example.user_profile_post_api: DEBUG
+
