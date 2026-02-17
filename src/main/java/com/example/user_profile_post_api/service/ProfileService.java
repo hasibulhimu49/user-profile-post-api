@@ -17,6 +17,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,8 +77,19 @@ public class ProfileService {
 
     public ProfileResponseDto updateProfile(Long profileId, ProfileUpdateRequestDto updateRequestDto) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new EntityNotFoundException("Not found"));
+
+
+        // STEP 1: Check ownership BEFORE updating
+        String loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!profile.getUser().getUsername().equals(loggedInUsername)) {
+            throw new AccessDeniedException("You can update only your own profile");
+        }
+
+
         profileMapper.updateEntity(updateRequestDto, profile);
         profileRepository.save(profile);
+
         return profileMapper.toResponse(profile);
 
     }
@@ -125,7 +139,7 @@ public class ProfileService {
                                            String bio,Gender gender,String username,
                                            Pageable pageable)
     {
-        Specification<Profile> spec=Specification.where(ProfileSpecifications.
+        Specification<Profile> spec=Specification.allOf(ProfileSpecifications.
                 hasFirstName(firstname)).and(ProfileSpecifications.hasLastName(lastname))
                 .and(ProfileSpecifications.hasBio(bio)).and(ProfileSpecifications.
                         hasGender(gender)).and(ProfileSpecifications.hasUsername(username));

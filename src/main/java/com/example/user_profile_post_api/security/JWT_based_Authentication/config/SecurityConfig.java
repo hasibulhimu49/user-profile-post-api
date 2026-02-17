@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,7 +19,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 //@EnableWebSecurity //Optional
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
+    private static final String[] WHITELIST_URLS = {
+            /*
+            "/error/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui/**",
+            "/webjars/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+             */
+
+            "/api/auth/register",
+            "/api/auth/login"
+    };
 
 
     @Bean
@@ -49,7 +68,14 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/api/**").permitAll()
+                        //.requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(WHITELIST_URLS).permitAll()
+
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/profiles/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/api/posts/**").hasAnyRole("USER","ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
 

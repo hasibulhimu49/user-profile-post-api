@@ -13,6 +13,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/*
+JwtAuthenticationFilter শুধুমাত্র protected endpoint এর request এ চলে
+
+✔️ তাই Login request এ কখনো JWT Filter run হয় না
+
+না first time, না second time, না কোনো time।
+
+
+
+JwtAuthenticationFilter steps:
+
+Header থেকে token নেয়
+
+Token valid কিনা check করে
+
+Token থেকে username বের করে
+
+Database থেকে user load করে
+
+SecurityContext এ authentication set করে
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -54,10 +75,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(authToken); //এটা হলো Spring Security-কে জানিয়ে দেওয়া যে user authenticated।
             }
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); //doFilter() হচ্ছে filter chain এর ভিতর Request কে পরবর্তী filter এ পাঠানোর কাজ।
+                                                 //Request → Filter 1 → Filter 2 → Filter 3 → Controller
     }
 }

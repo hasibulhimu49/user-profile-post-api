@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,6 +53,8 @@ public class ProfileController {
     }
 
 
+
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/{profileId}")
     public ResponseEntity<ProfileResponseDto> updateProfile(@PathVariable Long profileId, @RequestBody ProfileUpdateRequestDto updateRequestDto) {
         return ResponseEntity.ok(profileService.updateProfile(profileId, updateRequestDto));

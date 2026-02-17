@@ -1,5 +1,6 @@
 package com.example.user_profile_post_api.security.JWT_based_Authentication.jwt;
 
+import com.example.user_profile_post_api.security.JWT_based_Authentication.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -27,8 +28,12 @@ public class JwtService {
 
 
     public String generateToken(UserDetails userDetails) {
+
+        CustomUserDetails customUser = (CustomUserDetails) userDetails;
+
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())   // token এ username রাখছি
+                .setSubject(userDetails.getUsername()) // token এ username রাখছি
+                .claim("role",customUser.getUser().getRole())
                 .setIssuedAt(new Date())                 // কখন token generate হল
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24 ঘন্টা পরে expire
                 .signWith(getSignKey(), SignatureAlgorithm.HS256) // secret key দিয়ে sign

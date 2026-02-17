@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/auth/api")
+@RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
     UserRepository repository;
@@ -33,6 +33,7 @@ public class AuthController {
         user.setUsername(dto.username());
         user.setEmail(dto.email());
         user.setPassword(passwordEncoder.encode(dto.password()));
+        user.setRole("USER");
 
         repository.save(user);
         return "Save Successfull";

@@ -35,5 +35,9 @@ public class User {
    // private String role = "USER"; i can write this insted of implements UserDetails
 
 
+    @Column(nullable = true)
+    private String role="USER";
+
+
 
 }
