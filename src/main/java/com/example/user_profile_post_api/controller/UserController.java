@@ -56,9 +56,9 @@ public class UserController {
             throw new IllegalArgumentException("Username cannot start with a number" +dto.username());
         }
 
-        if(Character.isLetter(dto.email().charAt(0)))
+        if(Character.isLetter(dto.username().charAt(0)))
         {
-            throw new IllegalArgumentException(("Email cannot be start with a letter" +dto.email()));
+            throw new IllegalArgumentException(("Email cannot be start with a letter" +dto.username()));
         }
 
 

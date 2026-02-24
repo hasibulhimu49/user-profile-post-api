@@ -41,11 +41,6 @@ public class JwtService {
     }
 
 
-    public String extractUsername(String token)
-    {
-        return extractAllClaims(token).getSubject();
-    }
-
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
@@ -56,6 +51,10 @@ public class JwtService {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
+    public String extractUsername(String token)
+    {
+        return extractAllClaims(token).getSubject();
+    }
 
     private Claims extractAllClaims(String token)
     {

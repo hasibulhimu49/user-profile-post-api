@@ -65,7 +65,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         String username = jwtService.extractUsername(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null)//The JWT token contains a username and No user is currently authenticated in this request
+        {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 

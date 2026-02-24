@@ -42,7 +42,6 @@ public class ProfileService {
         profile.setUser(user); //relationship handled here
         Profile savedProfile = profileRepository.save(profile);
         return profileMapper.toResponse(savedProfile);
-
     }
 
     //get profile by id
